@@ -32,11 +32,11 @@ const Gameboard = (() => {
 
   const resetBoard = () => {
     gameBoard = ['', '', '',
-                '', '', '',
-                '', '', ''];
+                 '', '', '',
+                 '', '', ''];
     console.log('Gameboard has been reset.');
   }
-  
+
   const getGameboard = () => gameBoard;
   
   return {
@@ -62,7 +62,7 @@ const GameManager = (() => {
   const start = () => {
     // loop until some checks are valid (matching 3 or tie)
     do {
-      // ? Need to wait for valid input (check if pos of input is not taken)
+      // ? We will just assume this input is valid because later down the line we will be manipulating the DOM
       let input = parseInt(prompt(`Player ${_currentPlayerTurn} turn: `));
       // update gameboard
       Gameboard.updateBoard(input, _currentPlayerTurn);
@@ -89,5 +89,5 @@ const GameManager = (() => {
   return { start, reset };
 })();
 
-GameManager.start(); // Will keep running until there is a winner
-GameManager.reset(); // Reset the game
+// GameManager.start(); // Will keep running until there is a winner
+// GameManager.reset(); // Reset the game
