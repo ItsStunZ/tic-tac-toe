@@ -57,6 +57,8 @@ const Players = (() => {
 
 const HandleDOM = (() => {
   const gridCells = document.querySelectorAll('.grid__child');
+  const winnerOverlayElement = document.querySelector('.winner-overlay');
+  const winnerOverlayTitle = document.querySelector('.winner__title');
 
   const setupDom = () => {
     // add event listeners to cells
@@ -88,7 +90,25 @@ const HandleDOM = (() => {
     gridCells[cell].textContent = marker;
   }
 
-  return { setupDom, updateCell };
+  const displayWinner = (marker) => {
+    winnerOverlayTitle.textContent = `Player ${marker} Wins!`;
+    winnerOverlayElement.style.display = 'flex';
+  }
+
+  const resetDOM = () => {
+    // Reset winner overlay
+    winnerOverlayElement.style.display = 'none';
+    winnerOverlayTitle.textContent = '';
+
+    // Reset cells
+    gridCells.forEach((cell) => {
+      cell.textContent = '';
+      cell.classList.remove('valid');
+      cell.classList.remove('invalid');
+    })
+  }
+
+  return { setupDom, updateCell, displayWinner, resetDOM };
 })()
 
 const GameManager = (() => {
@@ -100,9 +120,10 @@ const GameManager = (() => {
       HandleDOM.updateCell(cell, currentPlayerTurn);
 
       // check if winner
-      const winner = Gameboard.checkForWinner(currentPlayerTurn);
-      if (winner) {
-        alert(`Player ${currentPlayerTurn} wins!`);
+      const isWinner = Gameboard.checkForWinner(currentPlayerTurn);
+      if (isWinner) {
+        winner = currentPlayerTurn;
+        HandleDOM.displayWinner(currentPlayerTurn);
       }
 
       // update currentPlayerTurn to next player
@@ -111,34 +132,14 @@ const GameManager = (() => {
 
   const getCurrentPlayerTurn = () => currentPlayerTurn;
 
-  // const start = () => {
-  //   // loop until some checks are valid (matching 3 or tie)
-  //   do {
-  //     // ? We will just assume this input is valid because later down the line we will be manipulating the DOM
-  //     let input = parseInt(prompt(`Player ${_currentPlayerTurn} turn: `));
-  //     // update gameboard
-  //     Gameboard.updateBoard(input, _currentPlayerTurn);
-  //     // check for winner
-  //     const isWinner = Gameboard.checkForWinner(_currentPlayerTurn);
-  //     if (isWinner) {
-  //       winner = _currentPlayerTurn;
-  //       alert(`Player ${winner} won the game!`);
-  //       console.log(Gameboard.getGameboard());
-  //       break;
-  //     }
-  //     // update _currentPlayerTurn
-  //     _currentPlayerTurn = _currentPlayerTurn == Players.playerX ? Players.playerO : Players.playerX;
-  //     console.log(`Next player is ${_currentPlayerTurn}`);
-  //   } while (winner === '');
-  // };
-  
   const reset = () => {
     winner = '';
-    _currentPlayerTurn = Players.playerX;
+    currentPlayerTurn = Players.playerX;
     Gameboard.resetBoard();
+    HandleDOM.resetDOM();
   }
 
-  return { playTurn, getCurrentPlayerTurn ,reset };
+  return { playTurn, getCurrentPlayerTurn, reset };
 })();
 
 // GameManager.start(); // Will keep running until there is a winner
