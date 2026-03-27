@@ -85,3 +85,34 @@ footer {
     border: 2px dashed rgb(255, 105, 105);
     cursor: default;
 }
+
+.winner-overlay {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.856);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.winner-overlay button {
+    border: none;
+    padding: 10px 25px;
+    border-radius: .7rem;
+    cursor: pointer;
+    transition: .2s;
+    font-weight: 700;
+}
+.winner-overlay button:hover {
+    transition: .2s;
+    transform: scale(1.05, 1.05);
+    border-radius: 0;
+}
+
+.winner__title {
+    color: white;
+    font-size: 6rem;
+    font-weight: 700;
+}
