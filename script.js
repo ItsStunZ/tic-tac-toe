@@ -55,30 +55,82 @@ const Players = (() => {
   return { playerX, playerO };
 })();
 
+const HandleDOM = (() => {
+  const gridCells = document.querySelectorAll('.grid__child');
+
+  const setupDom = () => {
+    // add event listeners to cells
+    for (let i = 0; i < gridCells.length; i++) {
+
+      // Click event
+      gridCells[i].addEventListener('click', () => {
+        if (!Gameboard.isPosAvailable(i)) return;
+        console.log(`Clicked on grid cell ${i}`);
+        GameManager.playTurn(i);
+      });
+
+      // hover event
+      gridCells[i].addEventListener('mouseenter', () => {
+        // Check if cell is available
+        if (Gameboard.isPosAvailable(i)) {
+          // toggle valid class
+          gridCells[i].classList.add('valid')
+          gridCells[i].classList.remove('invalid');
+        } else {
+          gridCells[i].classList.remove('valid')
+          gridCells[i].classList.add('invalid');
+        }
+      })
+    }
+  };
+
+  const updateCell = (cell, marker) => {
+    gridCells[cell].textContent = marker;
+  }
+
+  return { setupDom, updateCell };
+})()
+
 const GameManager = (() => {
   let winner = '';
-  let _currentPlayerTurn = Players.playerX; // first player to take turn
+  let currentPlayerTurn = Players.playerX; // first player to take turn
 
-  const start = () => {
-    // loop until some checks are valid (matching 3 or tie)
-    do {
-      // ? We will just assume this input is valid because later down the line we will be manipulating the DOM
-      let input = parseInt(prompt(`Player ${_currentPlayerTurn} turn: `));
-      // update gameboard
-      Gameboard.updateBoard(input, _currentPlayerTurn);
-      // check for winner
-      const isWinner = Gameboard.checkForWinner(_currentPlayerTurn);
-      if (isWinner) {
-        winner = _currentPlayerTurn;
-        alert(`Player ${winner} won the game!`);
-        console.log(Gameboard.getGameboard());
-        break;
+  const playTurn = (cell) => {
+      Gameboard.updateBoard(cell, currentPlayerTurn);
+      HandleDOM.updateCell(cell, currentPlayerTurn);
+
+      // check if winner
+      const winner = Gameboard.checkForWinner(currentPlayerTurn);
+      if (winner) {
+        alert(`Player ${currentPlayerTurn} wins!`);
       }
-      // update _currentPlayerTurn
-      _currentPlayerTurn = _currentPlayerTurn == Players.playerX ? Players.playerO : Players.playerX;
-      console.log(`Next player is ${_currentPlayerTurn}`);
-    } while (winner === '');
-  };
+
+      // update currentPlayerTurn to next player
+      currentPlayerTurn = currentPlayerTurn === Players.playerX ? Players.playerO : Players.playerX;
+  }
+
+  const getCurrentPlayerTurn = () => currentPlayerTurn;
+
+  // const start = () => {
+  //   // loop until some checks are valid (matching 3 or tie)
+  //   do {
+  //     // ? We will just assume this input is valid because later down the line we will be manipulating the DOM
+  //     let input = parseInt(prompt(`Player ${_currentPlayerTurn} turn: `));
+  //     // update gameboard
+  //     Gameboard.updateBoard(input, _currentPlayerTurn);
+  //     // check for winner
+  //     const isWinner = Gameboard.checkForWinner(_currentPlayerTurn);
+  //     if (isWinner) {
+  //       winner = _currentPlayerTurn;
+  //       alert(`Player ${winner} won the game!`);
+  //       console.log(Gameboard.getGameboard());
+  //       break;
+  //     }
+  //     // update _currentPlayerTurn
+  //     _currentPlayerTurn = _currentPlayerTurn == Players.playerX ? Players.playerO : Players.playerX;
+  //     console.log(`Next player is ${_currentPlayerTurn}`);
+  //   } while (winner === '');
+  // };
   
   const reset = () => {
     winner = '';
@@ -86,8 +138,9 @@ const GameManager = (() => {
     Gameboard.resetBoard();
   }
 
-  return { start, reset };
+  return { playTurn, getCurrentPlayerTurn ,reset };
 })();
 
 // GameManager.start(); // Will keep running until there is a winner
 // GameManager.reset(); // Reset the game
+HandleDOM.setupDom();
