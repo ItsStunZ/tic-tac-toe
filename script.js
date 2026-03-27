@@ -59,6 +59,7 @@ const HandleDOM = (() => {
   const gridCells = document.querySelectorAll('.grid__child');
   const winnerOverlayElement = document.querySelector('.winner-overlay');
   const winnerOverlayTitle = document.querySelector('.winner__title');
+  const currentTurnHeader = document.querySelector('.current-turn-display');
 
   const setupDom = () => {
     // add event listeners to cells
@@ -90,8 +91,12 @@ const HandleDOM = (() => {
     gridCells[cell].textContent = marker;
   }
 
-  const displayWinner = (marker) => {
-    winnerOverlayTitle.textContent = `Player ${marker} Wins!`;
+  const updateCurrentTurnDisplay = (marker) => {
+    currentTurnHeader.textContent = `Player ${marker} Turn!`;
+  }
+
+  const displayWinner = (text) => {
+    winnerOverlayTitle.textContent = text;
     winnerOverlayElement.style.display = 'flex';
   }
 
@@ -108,12 +113,13 @@ const HandleDOM = (() => {
     })
   }
 
-  return { setupDom, updateCell, displayWinner, resetDOM };
+  return { setupDom, updateCell, updateCurrentTurnDisplay, displayWinner, resetDOM };
 })()
 
 const GameManager = (() => {
   let winner = '';
   let currentPlayerTurn = Players.playerX; // first player to take turn
+  HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn);
 
   const playTurn = (cell) => {
       Gameboard.updateBoard(cell, currentPlayerTurn);
@@ -123,11 +129,25 @@ const GameManager = (() => {
       const isWinner = Gameboard.checkForWinner(currentPlayerTurn);
       if (isWinner) {
         winner = currentPlayerTurn;
-        HandleDOM.displayWinner(currentPlayerTurn);
+        HandleDOM.displayWinner(`Player ${currentPlayerTurn} Wins!`);
       }
 
       // update currentPlayerTurn to next player
       currentPlayerTurn = currentPlayerTurn === Players.playerX ? Players.playerO : Players.playerX;
+      HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn);
+
+      // Check for a tie
+      const gameBoard = Gameboard.getGameboard();
+
+      let check = 0;
+      gameBoard.forEach((cell) => {
+        if (cell !== '') check++;
+      })
+      
+      if (check >= 9) {
+        // Tie
+        HandleDOM.displayWinner(`No Winner. It's a Tie!`);
+      }
   }
 
   const getCurrentPlayerTurn = () => currentPlayerTurn;
