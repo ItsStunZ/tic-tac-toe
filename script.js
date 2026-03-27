@@ -155,6 +155,7 @@ const GameManager = (() => {
   const reset = () => {
     winner = '';
     currentPlayerTurn = Players.playerX;
+    HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn);
     Gameboard.resetBoard();
     HandleDOM.resetDOM();
   }
