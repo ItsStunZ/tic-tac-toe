@@ -30,9 +30,22 @@ const Gameboard = (() => {
     return false;
   }
 
+  const resetBoard = () => {
+    gameBoard = ['', '', '',
+                '', '', '',
+                '', '', ''];
+    console.log('Gameboard has been reset.');
+  }
+  
   const getGameboard = () => gameBoard;
   
-  return { updateBoard, checkForWinner, getGameboard, isPosAvailable};
+  return {
+          updateBoard,
+          checkForWinner,
+          getGameboard,
+          isPosAvailable,
+          resetBoard
+        };
 })();
 
 const Players = (() => {
@@ -66,8 +79,15 @@ const GameManager = (() => {
       console.log(`Next player is ${_currentPlayerTurn}`);
     } while (winner === '');
   };
+  
+  const reset = () => {
+    winner = '';
+    _currentPlayerTurn = Players.playerX;
+    Gameboard.resetBoard();
+  }
 
-  return { start };
+  return { start, reset };
 })();
 
-GameManager.start();
+GameManager.start(); // Will keep running until there is a winner
+GameManager.reset(); // Reset the game
