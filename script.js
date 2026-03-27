@@ -1,30 +1,34 @@
 const Gameboard = (() => {
-  let gameBoard = ['O', 'X', 'O',
-                   'X', 'O', 'X',
-                   'X', 'O', 'X'];
+  let gameBoard = ['', '', '',
+                   '', '', '',
+                   '', '', ''];
 
   const updateBoard = (pos, player) => {
     gameBoard[pos] = player;
   }
   
-  const checkForWinner = () => {
-    // Horizontal
-    if (new Set([gameBoard[0], gameBoard[1], gameBoard[2]]).size === 1 || 
-        new Set([gameBoard[3], gameBoard[4], gameBoard[5]]).size === 1 || 
-        new Set([gameBoard[6], gameBoard[7], gameBoard[8]]).size === 1)
+  const checkForWinner = (player) => {
+    // Horizontally
+    if (gameBoard[0] === player && gameBoard[1] === player && gameBoard[2] === player ||
+        gameBoard[3] === player && gameBoard[4] === player && gameBoard[5] === player ||
+        gameBoard[6] === player && gameBoard[7]=== player && gameBoard[8] === player)
         return true;
 
-    // Vertical
-    if (new Set([gameBoard[0], gameBoard[3], gameBoard[6]]).size === 1 ||
-        new Set([gameBoard[1], gameBoard[4], gameBoard[7]]).size === 1 ||
-        new Set([gameBoard[2], gameBoard[5], gameBoard[8]]).size === 1)
+    // Vertically
+    if (gameBoard[0] === player && gameBoard[3] === player && gameBoard[6] === player ||
+        gameBoard[1] === player && gameBoard[4] === player && gameBoard[7] === player ||
+        gameBoard[2] === player && gameBoard[5]=== player && gameBoard[8] === player)
         return true;
 
-    // TODO: Add horizontal check
+    // Diagonol
+    if (gameBoard[0] === player && gameBoard[4] === player && gameBoard[8] === player ||
+        gameBoard[2] === player && gameBoard[4] === player && gameBoard[6] === player)
+        return true;
+
     return false;
   }
 
-  const getGameboard = () => gameBoard();
+  const getGameboard = () => gameBoard;
   
   return { updateBoard, checkForWinner, getGameboard};
 })();
@@ -43,15 +47,16 @@ const GameManager = (() => {
   const start = () => {
     // loop until some checks are valid (matching 3 or tie)
     do { 
-    //   let input = parseInt(prompt(`Player ${_currentPlayerTurn} turn: `));
+      let input = parseInt(prompt(`Player ${_currentPlayerTurn} turn: `));
       // update gameboard
-    //   Gameboard.updateBoard(input, _currentPlayerTurn);
+      Gameboard.updateBoard(input, _currentPlayerTurn);
       // check for winner
-      const isWinner = Gameboard.checkForWinner();
+      const isWinner = Gameboard.checkForWinner(_currentPlayerTurn);
       if (isWinner) {
-        winner = 'a';
-        alert('Winner');
-        console.log(GameManager.getGameBoard)
+        winner = _currentPlayerTurn;
+        alert(`Player ${winner} won the game!`);
+        console.log(Gameboard.getGameboard());
+        break;
       }
       // update _currentPlayerTurn
       _currentPlayerTurn = _currentPlayerTurn == Players.playerX ? Players.playerO : Players.playerX;
