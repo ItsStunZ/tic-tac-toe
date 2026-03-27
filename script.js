@@ -6,6 +6,8 @@ const Gameboard = (() => {
   const updateBoard = (pos, player) => {
     gameBoard[pos] = player;
   }
+
+  const isPosAvailable = (pos) => gameBoard[pos] === '';
   
   const checkForWinner = (player) => {
     // Horizontally
@@ -30,7 +32,7 @@ const Gameboard = (() => {
 
   const getGameboard = () => gameBoard;
   
-  return { updateBoard, checkForWinner, getGameboard};
+  return { updateBoard, checkForWinner, getGameboard, isPosAvailable};
 })();
 
 const Players = (() => {
@@ -46,7 +48,8 @@ const GameManager = (() => {
 
   const start = () => {
     // loop until some checks are valid (matching 3 or tie)
-    do { 
+    do {
+      // ? Need to wait for valid input (check if pos of input is not taken)
       let input = parseInt(prompt(`Player ${_currentPlayerTurn} turn: `));
       // update gameboard
       Gameboard.updateBoard(input, _currentPlayerTurn);
