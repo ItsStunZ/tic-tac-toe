@@ -3,28 +3,28 @@ const Gameboard = (() => {
                    '', '', '',
                    '', '', ''];
 
-  const updateBoard = (pos, player) => {
-    gameBoard[pos] = player;
+  const updateBoard = (pos, marker) => {
+    gameBoard[pos] = marker;
   }
 
   const isPosAvailable = (pos) => gameBoard[pos] === '';
   
-  const checkForWinner = (player) => {
+  const checkForWinner = (marker) => {
     // Horizontally
-    if (gameBoard[0] === player && gameBoard[1] === player && gameBoard[2] === player ||
-        gameBoard[3] === player && gameBoard[4] === player && gameBoard[5] === player ||
-        gameBoard[6] === player && gameBoard[7]=== player && gameBoard[8] === player)
+    if (gameBoard[0] === marker && gameBoard[1] === marker && gameBoard[2] === marker ||
+        gameBoard[3] === marker && gameBoard[4] === marker && gameBoard[5] === marker ||
+        gameBoard[6] === marker && gameBoard[7]=== marker && gameBoard[8] === marker)
         return true;
 
     // Vertically
-    if (gameBoard[0] === player && gameBoard[3] === player && gameBoard[6] === player ||
-        gameBoard[1] === player && gameBoard[4] === player && gameBoard[7] === player ||
-        gameBoard[2] === player && gameBoard[5]=== player && gameBoard[8] === player)
+    if (gameBoard[0] === marker && gameBoard[3] === marker && gameBoard[6] === marker ||
+        gameBoard[1] === marker && gameBoard[4] === marker && gameBoard[7] === marker ||
+        gameBoard[2] === marker && gameBoard[5]=== marker && gameBoard[8] === marker)
         return true;
 
     // Diagonol
-    if (gameBoard[0] === player && gameBoard[4] === player && gameBoard[8] === player ||
-        gameBoard[2] === player && gameBoard[4] === player && gameBoard[6] === player)
+    if (gameBoard[0] === marker && gameBoard[4] === marker && gameBoard[8] === marker ||
+        gameBoard[2] === marker && gameBoard[4] === marker && gameBoard[6] === marker)
         return true;
 
     return false;
@@ -49,16 +49,18 @@ const Gameboard = (() => {
 })();
 
 const Players = (() => {
-  const playerX = {
+  const player1 = {
+    username: 'Player X',
     marker: 'X',
     score: 0
   };
-  const playerO = {
+  const player2 = {
+    username: 'Player O',
     marker: 'O',
     score: 0
   };
 
-  return { playerX, playerO };
+  return { player1, player2 };
 })();
 
 const HandleDOM = (() => {
@@ -98,11 +100,18 @@ const HandleDOM = (() => {
     gridCells[cell].textContent = marker;
   }
 
-  const updateCurrentTurnDisplay = (marker) => {
-    currentTurnHeader.textContent = `Player ${marker} Turn!`;
+  const updateScoreboard = () => {
+    const player1Element = document.querySelector('#scoreboard__playerX');
+    const player2Element = document.querySelector('#scoreboard__playerO');
+    player1Element.textContent = `${Players.player1.username}: ${Players.player1.score}`;
+    player2Element.textContent = `${Players.player2.username}: ${Players.player2.score}`;
   }
 
-  const displayWinner = (text) => {
+  const updateCurrentTurnDisplay = (username) => {
+    currentTurnHeader.textContent = `${username} Turn!`;
+  }
+
+  const displayResultOverlay = (text) => {
     winnerOverlayTitle.textContent = text;
     winnerOverlayElement.style.display = 'flex';
   }
@@ -120,28 +129,30 @@ const HandleDOM = (() => {
     })
   }
 
-  return { setupDom, updateCell, updateCurrentTurnDisplay, displayWinner, resetDOM };
+  return { setupDom, updateCell, updateScoreboard, updateCurrentTurnDisplay, displayResultOverlay, resetDOM };
 })()
 
 const GameManager = (() => {
   let winner = '';
-  let currentPlayerTurn = Players.playerX; // first player to take turn
-  HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn);
+  let currentPlayerTurn = Players.player1; // first player to take turn
+  HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn.username);
 
   const playTurn = (cell) => {
-      Gameboard.updateBoard(cell, currentPlayerTurn);
-      HandleDOM.updateCell(cell, currentPlayerTurn);
+      Gameboard.updateBoard(cell, currentPlayerTurn.marker);
+      HandleDOM.updateCell(cell, currentPlayerTurn.marker);
 
       // check if winner
-      const isWinner = Gameboard.checkForWinner(currentPlayerTurn);
+      const isWinner = Gameboard.checkForWinner(currentPlayerTurn.marker);
       if (isWinner) {
-        winner = currentPlayerTurn;
-        HandleDOM.displayWinner(`Player ${currentPlayerTurn} Wins!`);
+        winner = currentPlayerTurn.username;
+        currentPlayerTurn.score++;
+        HandleDOM.updateScoreboard();
+        HandleDOM.displayResultOverlay(`${winner} Wins!`);
       }
 
       // update currentPlayerTurn to next player
-      currentPlayerTurn = currentPlayerTurn === Players.playerX ? Players.playerO : Players.playerX;
-      HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn);
+      currentPlayerTurn = currentPlayerTurn === Players.player1 ? Players.player2 : Players.player1;
+      HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn.username);
 
       // Check for a tie
       const gameBoard = Gameboard.getGameboard();
@@ -153,7 +164,7 @@ const GameManager = (() => {
       
       if (check >= 9) {
         // Tie
-        HandleDOM.displayWinner(`No Winner. It's a Tie!`);
+        HandleDOM.displayResultOverlay(`No Winner. It's a Tie!`);
       }
   }
 
@@ -161,8 +172,8 @@ const GameManager = (() => {
 
   const reset = () => {
     winner = '';
-    currentPlayerTurn = Players.playerX;
-    HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn);
+    currentPlayerTurn = Players.player1;
+    HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn.username);
     Gameboard.resetBoard();
     HandleDOM.resetDOM();
   }
