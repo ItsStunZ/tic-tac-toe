@@ -148,6 +148,7 @@ const GameManager = (() => {
         currentPlayerTurn.score++;
         HandleDOM.updateScoreboard();
         HandleDOM.displayResultOverlay(`${winner} Wins!`);
+        return;
       }
 
       // update currentPlayerTurn to next player
