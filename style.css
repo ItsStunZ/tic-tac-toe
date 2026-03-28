@@ -46,6 +46,10 @@ footer {
     text-decoration: underline;
 }
 
+a {
+    color: #f2e9e4;
+}
+
 .game-content {
     width: 100%;
 
