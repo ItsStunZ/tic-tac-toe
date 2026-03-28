@@ -14,8 +14,19 @@
     <header>
         Tic Tac Toe
     </header>
+    <h2 class="current-turn-display"></h2>
     <div class="game-content">
-        <h2 class="current-turn-display">Placeholder Text</h2>
+        <div class="sidebar">
+            <div class="scoreboard-container">
+                <h2>Scoreboard</h2>
+                <hr>
+                <p id="scoreboard__playerX">Player X: 0</p>
+                <p id="scoreboard__playerO">Player O: 0</p>
+            </div>
+            <div class="sidebar-btn-container">
+                <button onclick="GameManager.reset();">Restart</button>
+            </div>
+        </div>
 
         <div class="grid">
             <!-- Grid for tic tac toe -->

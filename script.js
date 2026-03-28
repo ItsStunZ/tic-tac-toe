@@ -49,8 +49,14 @@ const Gameboard = (() => {
 })();
 
 const Players = (() => {
-  const playerX = 'X';
-  const playerO = 'O';
+  const playerX = {
+    marker: 'X',
+    score: 0
+  };
+  const playerO = {
+    marker: 'O',
+    score: 0
+  };
 
   return { playerX, playerO };
 })();
@@ -60,6 +66,7 @@ const HandleDOM = (() => {
   const winnerOverlayElement = document.querySelector('.winner-overlay');
   const winnerOverlayTitle = document.querySelector('.winner__title');
   const currentTurnHeader = document.querySelector('.current-turn-display');
+  const scoreBoardElement = document.querySelector('.scoreboard-container');
 
   const setupDom = () => {
     // add event listeners to cells
@@ -155,6 +162,7 @@ const GameManager = (() => {
   const reset = () => {
     winner = '';
     currentPlayerTurn = Players.playerX;
+    HandleDOM.updateCurrentTurnDisplay(currentPlayerTurn);
     Gameboard.resetBoard();
     HandleDOM.resetDOM();
   }
@@ -162,6 +170,4 @@ const GameManager = (() => {
   return { playTurn, getCurrentPlayerTurn, reset };
 })();
 
-// GameManager.start(); // Will keep running until there is a winner
-// GameManager.reset(); // Reset the game
 HandleDOM.setupDom();
